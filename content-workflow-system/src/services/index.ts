@@ -3,7 +3,7 @@ export { api } from './api';
 export type { ApiResponse } from './api';
 export { AuthService, authService } from './auth';
 export { ContentService, contentService } from './content';
-export { analyticsService } from './analytics';
+export { advancedAnalyticsService } from './advancedAnalytics';
 export { PublishService, publishService } from './publish';
 export { InspirationService, inspirationService } from './inspiration';
 export { UserService } from './user';

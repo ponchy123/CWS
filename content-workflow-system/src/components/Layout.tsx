@@ -25,7 +25,6 @@ import {
 import { Link, useLocation } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 // 图标映射

@@ -84,8 +84,9 @@
 
 ### 后端技术栈
 - **运行环境**: Node.js 16+ - 高效的JavaScript运行时
-- **Web框架**: Express.js + TypeScript - 轻量级Web应用框架
-- **数据库**: PostgreSQL + Redis - 关系型数据库与缓存结合
+- **Web框架**: Express.js - 轻量级Web应用框架
+- **数据库**: MongoDB + Redis - NoSQL数据库与缓存结合
+- **ORM**: Mongoose - 优雅的MongoDB对象建模工具
 - **认证**: JWT - 安全的无状态身份验证
 - **实时通信**: Socket.io - 双向实时通信
 - **数据验证**: Joi - 强大的Schema验证
@@ -160,7 +161,6 @@ LB8/                              # 项目根目录
 │   │   ├── deployment/           # 部署文档
 │   │   └── development/          # 开发文档
 │   ├── index.html                # 入口HTML文件
-│   ├── init.sql                  # 数据库初始化SQL
 │   ├── monitoring/               # 监控配置
 │   │   ├── alert-rules.yml       # 告警规则
 │   │   ├── grafana-dashboard.json # Grafana仪表盘配置
@@ -310,12 +310,9 @@ PORT=3001
 HOST=localhost
 NODE_ENV=development
 
-# 数据库配置
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=content_workflow
-DB_USER=postgres
-DB_PASSWORD=your_password
+# MongoDB数据库配置
+# 完整连接字符串
+MONGODB_URI=mongodb://admin:password123@localhost:27017/content-workflow?authSource=admin
 
 # Redis配置
 REDIS_HOST=localhost
@@ -339,28 +336,21 @@ MAX_FILE_SIZE=10485760 # 10MB
 
 3. **启动数据库服务**
 
-确保PostgreSQL和Redis服务正在运行：
+确保MongoDB和Redis服务正在运行：
 
 ```bash
-# 使用Docker启动PostgreSQL
-docker run -d -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=your_password -e POSTGRES_USER=postgres -e POSTGRES_DB=content_workflow postgres:14
+# 使用Docker启动MongoDB
+docker run -d -p 27017:27017 --name mongo -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=password123 mongo:latest
 
 # 使用Docker启动Redis
 docker run -d -p 6379:6379 --name redis redis:latest
 
 # 或使用本地安装的服务
-# 启动PostgreSQL服务
+# 启动MongoDB服务
 # 启动Redis服务
 ```
 
-4. **初始化数据库**
-
-```bash
-# 运行初始化SQL脚本
-psql -U postgres -d content_workflow -f ../init.sql
-```
-
-5. **启动后端服务**
+4. **启动后端服务**
 
 ```bash
 # 开发模式（带热重载）
@@ -567,11 +557,7 @@ HOST=0.0.0.0
 NODE_ENV=production
 
 # 数据库配置
-DB_HOST=your_db_host
-DB_PORT=5432
-DB_NAME=content_workflow
-DB_USER=your_db_user
-DB_PASSWORD=your_secure_password
+MONGODB_URI=mongodb://your_user:your_secure_password@your_db_host:27017/content_workflow?authSource=admin
 
 # 安全配置
 JWT_SECRET=your_secure_jwt_secret
@@ -698,13 +684,13 @@ LOG_FORMAT=json
 - Edge 90+ 
 
 ### 3. 如何备份和恢复数据？
-- **备份**: 运行`npm run db:backup`命令或使用PostgreSQL内置工具
-- **恢复**: 运行`npm run db:restore -- --file backup.sql`命令
+- **备份**: 使用`mongodump`命令行工具进行备份。
+- **恢复**: 使用`mongorestore`命令行工具进行恢复。
 
 ### 4. 如何添加新的内容平台集成？
 - 在`server/src/integrations/`目录下创建新的集成模块
-- 在`server/src/config/integrations.ts`中注册新集成
-- 重新构建并部署后端服务
+- 在`server/src/config/integrations.js`中注册新集成
+- 重新启动后端服务
 
 ### 5. 系统支持多少并发用户？
 - 标准配置下支持500-1000并发用户
