@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内容API测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .content-item { border: 1px solid #ddd; margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .ai-generated { background-color: #f0f8ff; border-left: 4px solid #007bff; }
+        .title { font-weight: bold; color: #333; margin-bottom: 5px; }
+        .meta { color: #666; font-size: 12px; }
+        .content { margin: 10px 0; color: #555; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .status { padding: 20px; background: #f8f9fa; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>内容API测试页面</h1>
+    
+    <div class="status">
+        <h3>测试状态</h3>
+        <div id="status">准备测试...</div>
+    </div>
+
+    <div>
+        <button onclick="testAPI()">🔄 测试API获取</button>
+        <button onclick="testAIGenerate()">🤖 测试AI生成</button>
+        <button onclick="clearCache()">🗑️ 清除缓存</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        async function testAPI() {
+            const status = document.getElementById('status');
+            const results = document.getElementById('results');
+            
+            try {
+                status.innerHTML = '🔄 正在获取内容...';
+                
+                // 添加时间戳防缓存
+                const timestamp = Date.now();
+                const url = `http://localhost:3004/api/content?limit=10&_t=${timestamp}`;
+                
+                console.log('🔍 请求URL:', url);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                console.log('📊 API响应:', data);
+                
+                if (data.success) {
+                    const contents = data.data?.contents || [];
+                    status.innerHTML = `✅ 成功获取 ${contents.length} 条内容 (时间戳: ${timestamp})`;
+                    
+                    results.innerHTML = contents.map((content, index) => `
+                        <div class="content-item ${content.metadata?.generatedBy === 'AI' ? 'ai-generated' : ''}">
+                            <div class="title">${index + 1}. ${content.title}</div>
+                            <div class="meta">
+                                ID: ${content._id} | 
+                                状态: ${content.status} | 
+                                分类: ${content.category} | 
+                                创建时间: ${new Date(content.createdAt).toLocaleString('zh-CN')}
+                                ${content.metadata?.generatedBy === 'AI' ? ' | 🤖 AI生成' : ''}
+                            </div>
+                            <div class="content">${content.content.substring(0, 200)}...</div>
+                        </div>
+                    `).join('');
+                } else {
+                    status.innerHTML = `❌ 获取失败: ${data.message}`;
+                    results.innerHTML = '';
+                }
+            } catch (error) {
+                console.error('❌ 请求失败:', error);
+                status.innerHTML = `❌ 网络错误: ${error.message}`;
+                results.innerHTML = '';
+            }
+        }
+
+        async function testAIGenerate() {
+            const status = document.getElementById('status');
+            
+            try {
+                status.innerHTML = '🤖 正在AI生成内容...';
+                
+                const response = await fetch('http://localhost:3004/api/content/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        category: '职业发展',
+                        tags: ['AI创作', '测试'],
+                        inspiration: '测试AI生成功能',
+                        metadata: {
+                            generatedBy: 'AI',
+                            generatedAt: new Date().toISOString()
+                        }
+                    }),
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    status.innerHTML = `🎉 AI生成成功: ${data.data.title}`;
+                    // 自动刷新内容列表
+                    setTimeout(() => testAPI(), 1000);
+                } else {
+                    status.innerHTML = `❌ AI生成失败: ${data.message}`;
+                }
+            } catch (error) {
+                console.error('❌ AI生成失败:', error);
+                status.innerHTML = `❌ AI生成错误: ${error.message}`;
+            }
+        }
+
+        function clearCache() {
+            // 清除本地存储
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // 强制刷新页面
+            window.location.reload(true);
+        }
+
+        // 页面加载时自动测试
+        window.onload = function() {
+            testAPI();
+        };
+    </script>
+</body>
+</html>

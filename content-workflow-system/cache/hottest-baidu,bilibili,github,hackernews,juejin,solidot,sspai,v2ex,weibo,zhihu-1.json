@@ -1,0 +1,46 @@
+{
+  "timestamp": 1755574183254,
+  "data": [
+    {
+      "title": "前端技术趋势2024：React vs Vue vs Angular生态对比",
+      "platform": "掘金",
+      "url": "https://newsnow.busiyi.world/#juejin",
+      "heat": 49652,
+      "category": "技术分享",
+      "tags": [
+        "技术",
+        "分享"
+      ],
+      "summary": "前端技术趋势2024：React vs Vue vs Angular生态对比成为技术分享领域热门话题，引发广泛关注和讨论，体现了当前用户的关注焦点和行业发展趋势。",
+      "content": "**前端技术趋势2024：React vs Vue vs Angular生态对比**\n\n**热门热点分析**：\n这一话题在技术分享领域引起了广泛关注，持续保持高热度，反映了当前用户的关注焦点和行业发展趋势。\n\n**数据来源**：\n- 平台：NewsNow 实时聚合 + 智能缓存\n- 类型：热度排行\n- 状态：持续火热\n- 覆盖：多平台同步传播\n\n**内容价值分析**：\n1. **时效性**：较高，适合深度分析\n2. **传播性**：跨平台传播，具有较强的社交媒体传播潜力\n3. **专业性**：在技术分享领域具有一定的专业价值和参考意义\n4. **商业性**：可通过内容创作、话题营销等方式实现商业价值\n\n**创作建议**：\n- **快速响应**：深度挖掘，提供独特见解\n- **角度选择**：从技术分享专业角度切入，避免同质化竞争\n- **内容形式**：适合制作深度分析、专题报道、系列内容",
+      "createdAt": "2025-08-19T01:55:37.328Z",
+      "rank": 1,
+      "source": "juejin",
+      "mode": "hottest",
+      "color": "#1e80ff",
+      "isRealData": false,
+      "aiAnalysis": {
+        "sentiment": "positive",
+        "keywords": [
+          "技术",
+          "分享"
+        ],
+        "contentType": "trending_topic",
+        "difficulty": "medium",
+        "estimatedReadTime": 7,
+        "targetAudience": [
+          "开发者",
+          "学习者"
+        ],
+        "viralPotential": 56,
+        "commercialValue": 46,
+        "trendScore": 77,
+        "engagementRate": 17,
+        "shareability": 73,
+        "timeValue": "high",
+        "authenticity": 92,
+        "reliability": 90
+      }
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "name": "内容创作工作流系统",
+  "short_name": "内容工作流",
+  "description": "专业的内容创作和管理工作流平台",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "categories": ["productivity", "business", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "创建内容",
+      "short_name": "创建",
+      "description": "快速创建新内容",
+      "url": "/content/create",
+      "icons": [
+        {
+          "src": "/icons/shortcut-create.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "内容规划",
+      "short_name": "规划",
+      "description": "查看内容规划",
+      "url": "/planning",
+      "icons": [
+        {
+          "src": "/icons/shortcut-planning.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "灵感管理",
+      "short_name": "灵感",
+      "description": "管理创作灵感",
+      "url": "/inspiration",
+      "icons": [
+        {
+          "src": "/icons/shortcut-inspiration.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "数据分析",
+      "short_name": "分析",
+      "description": "查看数据分析",
+      "url": "/analytics",
+      "icons": [
+        {
+          "src": "/icons/shortcut-analytics.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "桌面端仪表板"
+    },
+    {
+      "src": "/screenshots/mobile-dashboard.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "移动端仪表板"
+    },
+    {
+      "src": "/screenshots/desktop-content-editor.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "桌面端内容编辑器"
+    },
+    {
+      "src": "/screenshots/mobile-content-list.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "移动端内容列表"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://content-workflow.com/manifest.json"
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "protocol_handlers": [
+    {
+      "protocol": "web+contentworkflow",
+      "url": "/handle?type=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/handle-files",
+      "accept": {
+        "text/markdown": [".md"],
+        "text/plain": [".txt"],
+        "application/json": [".json"]
+      }
+    }
+  ]
+}

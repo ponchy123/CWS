@@ -1,0 +1,260 @@
+groups:
+  # 系统级告警
+  - name: system-alerts
+    rules:
+    # CPU使用率过高
+    - alert: HighCPUUsage
+      expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+      for: 5m
+      labels:
+        severity: warning
+        category: system
+      annotations:
+        summary: "High CPU usage detected"
+        description: "CPU usage is above 80% for more than 5 minutes on {{ $labels.instance }}"
+
+    # 内存使用率过高
+    - alert: HighMemoryUsage
+      expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+      for: 5m
+      labels:
+        severity: warning
+        category: system
+      annotations:
+        summary: "High memory usage detected"
+        description: "Memory usage is above 85% for more than 5 minutes on {{ $labels.instance }}"
+
+    # 磁盘空间不足
+    - alert: DiskSpaceLow
+      expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 90
+      for: 5m
+      labels:
+        severity: critical
+        category: system
+      annotations:
+        summary: "Disk space is running low"
+        description: "Disk usage is above 90% on {{ $labels.instance }} mount {{ $labels.mountpoint }}"
+
+    # 系统负载过高
+    - alert: HighSystemLoad
+      expr: node_load15 > 2
+      for: 10m
+      labels:
+        severity: warning
+        category: system
+      annotations:
+        summary: "High system load detected"
+        description: "System load is {{ $value }} on {{ $labels.instance }}"
+
+  # 应用级告警
+  - name: application-alerts
+    rules:
+    # 应用服务不可用
+    - alert: ApplicationDown
+      expr: up{job="content-workflow-app"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        category: application
+      annotations:
+        summary: "Application is down"
+        description: "Content workflow application is not responding on {{ $labels.instance }}"
+
+    # HTTP错误率过高
+    - alert: HighErrorRate
+      expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
+      for: 5m
+      labels:
+        severity: warning
+        category: application
+      annotations:
+        summary: "High HTTP error rate"
+        description: "HTTP 5xx error rate is {{ $value }}% for more than 5 minutes"
+
+    # 响应时间过长
+    - alert: HighResponseTime
+      expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+      for: 5m
+      labels:
+        severity: warning
+        category: application
+      annotations:
+        summary: "High response time"
+        description: "95th percentile response time is {{ $value }}s for more than 5 minutes"
+
+    # 内存泄漏检测
+    - alert: MemoryLeak
+      expr: increase(process_resident_memory_bytes[1h]) > 100000000
+      for: 30m
+      labels:
+        severity: warning
+        category: application
+      annotations:
+        summary: "Potential memory leak detected"
+        description: "Memory usage increased by {{ $value | humanize }}B in the last hour"
+
+  # 数据库告警
+  - name: database-alerts
+    rules:
+    # MongoDB连接数过高
+    - alert: MongoDBHighConnections
+      expr: mongodb_connections{state="current"} / mongodb_connections{state="available"} * 100 > 80
+      for: 5m
+      labels:
+        severity: warning
+        category: database
+      annotations:
+        summary: "MongoDB connection usage is high"
+        description: "MongoDB connection usage is {{ $value }}% on {{ $labels.instance }}"
+
+    # MongoDB复制延迟
+    - alert: MongoDBReplicationLag
+      expr: mongodb_replset_member_replication_lag > 10
+      for: 5m
+      labels:
+        severity: warning
+        category: database
+      annotations:
+        summary: "MongoDB replication lag is high"
+        description: "MongoDB replication lag is {{ $value }}s on {{ $labels.instance }}"
+
+    # Redis内存使用率过高
+    - alert: RedisHighMemoryUsage
+      expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 90
+      for: 5m
+      labels:
+        severity: warning
+        category: database
+      annotations:
+        summary: "Redis memory usage is high"
+        description: "Redis memory usage is {{ $value }}% on {{ $labels.instance }}"
+
+    # Redis连接数过高
+    - alert: RedisHighConnections
+      expr: redis_connected_clients > 1000
+      for: 5m
+      labels:
+        severity: warning
+        category: database
+      annotations:
+        summary: "Redis connection count is high"
+        description: "Redis has {{ $value }} connected clients on {{ $labels.instance }}"
+
+  # 业务指标告警
+  - name: business-alerts
+    rules:
+    # 内容发布失败率过高
+    - alert: HighContentPublishFailureRate
+      expr: rate(content_publish_failures_total[5m]) / rate(content_publish_total[5m]) * 100 > 10
+      for: 5m
+      labels:
+        severity: warning
+        category: business
+      annotations:
+        summary: "High content publish failure rate"
+        description: "Content publish failure rate is {{ $value }}% for more than 5 minutes"
+
+    # 用户注册异常
+    - alert: UserRegistrationAnomaly
+      expr: rate(user_registrations_total[1h]) < 0.1 * rate(user_registrations_total[24h] offset 24h)
+      for: 30m
+      labels:
+        severity: warning
+        category: business
+      annotations:
+        summary: "User registration rate is unusually low"
+        description: "User registration rate is significantly lower than usual"
+
+    # API调用量异常
+    - alert: APICallVolumeAnomaly
+      expr: rate(api_requests_total[1h]) < 0.5 * rate(api_requests_total[24h] offset 24h)
+      for: 30m
+      labels:
+        severity: warning
+        category: business
+      annotations:
+        summary: "API call volume is unusually low"
+        description: "API call volume is significantly lower than usual"
+
+  # 安全告警
+  - name: security-alerts
+    rules:
+    # 异常登录尝试
+    - alert: HighFailedLoginAttempts
+      expr: rate(auth_login_failures_total[5m]) > 10
+      for: 2m
+      labels:
+        severity: warning
+        category: security
+      annotations:
+        summary: "High number of failed login attempts"
+        description: "{{ $value }} failed login attempts per second for more than 2 minutes"
+
+    # 可疑IP访问
+    - alert: SuspiciousIPActivity
+      expr: rate(http_requests_total{status="403"}[5m]) by (client_ip) > 5
+      for: 5m
+      labels:
+        severity: warning
+        category: security
+      annotations:
+        summary: "Suspicious IP activity detected"
+        description: "IP {{ $labels.client_ip }} has {{ $value }} 403 responses per second"
+
+    # SSL证书即将过期
+    - alert: SSLCertificateExpiringSoon
+      expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 7
+      for: 1h
+      labels:
+        severity: warning
+        category: security
+      annotations:
+        summary: "SSL certificate expiring soon"
+        description: "SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration }}"
+
+  # 容器和Kubernetes告警
+  - name: container-alerts
+    rules:
+    # 容器重启频繁
+    - alert: ContainerHighRestartRate
+      expr: rate(kube_pod_container_status_restarts_total[15m]) > 0
+      for: 5m
+      labels:
+        severity: warning
+        category: container
+      annotations:
+        summary: "Container restarting frequently"
+        description: "Container {{ $labels.container }} in pod {{ $labels.pod }} is restarting frequently"
+
+    # Pod内存使用率过高
+    - alert: PodHighMemoryUsage
+      expr: container_memory_usage_bytes / container_spec_memory_limit_bytes * 100 > 90
+      for: 5m
+      labels:
+        severity: warning
+        category: container
+      annotations:
+        summary: "Pod memory usage is high"
+        description: "Pod {{ $labels.pod }} memory usage is {{ $value }}%"
+
+    # Pod CPU使用率过高
+    - alert: PodHighCPUUsage
+      expr: rate(container_cpu_usage_seconds_total[5m]) / container_spec_cpu_quota * container_spec_cpu_period * 100 > 90
+      for: 5m
+      labels:
+        severity: warning
+        category: container
+      annotations:
+        summary: "Pod CPU usage is high"
+        description: "Pod {{ $labels.pod }} CPU usage is {{ $value }}%"
+
+    # 节点不可调度
+    - alert: NodeNotReady
+      expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+      for: 5m
+      labels:
+        severity: critical
+        category: container
+      annotations:
+        summary: "Kubernetes node is not ready"
+        description: "Node {{ $labels.node }} is not ready for more than 5 minutes"

@@ -1,0 +1,139 @@
+{
+  "timestamp": "2025-08-19T12:27:44.074Z",
+  "stage": "Stage 6 - DevOps and Monitoring",
+  "results": {
+    "cicd": {
+      "success": true,
+      "responseTime": 4,
+      "workflow": {
+        "exists": true,
+        "jobs": 9,
+        "steps": 33,
+        "triggers": 2
+      },
+      "docker": {
+        "dockerfile": true,
+        "compose": true
+      },
+      "deployment": {
+        "script": true
+      },
+      "features": {
+        "codeQuality": true,
+        "unitTests": true,
+        "integrationTests": true,
+        "securityScan": true,
+        "deployment": true
+      }
+    },
+    "monitoring": {
+      "success": true,
+      "responseTime": 2,
+      "prometheus": {
+        "exists": true,
+        "scrapeJobs": 10,
+        "alertingEnabled": true
+      },
+      "alerting": {
+        "rulesExists": true,
+        "rulesCount": 22
+      },
+      "grafana": {
+        "dashboardExists": true,
+        "panelsCount": 7
+      },
+      "deployment": {
+        "composeExists": true
+      },
+      "coverage": {
+        "systemMetrics": true,
+        "applicationMetrics": true,
+        "businessMetrics": true
+      }
+    },
+    "logging": {
+      "success": true,
+      "responseTime": 1,
+      "configuration": {
+        "configExists": true,
+        "elkStack": true,
+        "structuredLogging": false
+      },
+      "storage": {
+        "logDirectory": true,
+        "retention": true
+      },
+      "features": {
+        "logAggregation": true,
+        "logSearch": true,
+        "logVisualization": true,
+        "errorTracking": true
+      }
+    },
+    "security": {
+      "success": false,
+      "error": "ENOENT: no such file or directory, open 'D:\\lifespace\\lifebook\\LB8\\content-workflow-system\\.env.example'"
+    },
+    "performance": {
+      "success": true,
+      "responseTime": 0,
+      "testing": {
+        "performanceTests": true,
+        "loadTesting": true,
+        "benchmarking": true
+      },
+      "monitoring": {
+        "metrics": true,
+        "realtime": true
+      },
+      "optimization": {
+        "caching": true,
+        "compression": true,
+        "cdn": true
+      },
+      "metrics": {
+        "responseTime": 106.79740041052641,
+        "throughput": 645.3011647322812,
+        "errorRate": 0.5572106717381229,
+        "cacheHitRate": 95.55612583351078
+      }
+    },
+    "deployment": {
+      "success": true,
+      "responseTime": 0,
+      "environments": {
+        "configured": 3,
+        "total": 4,
+        "multiEnv": true
+      },
+      "containerization": {
+        "docker": true,
+        "compose": true,
+        "multiStage": true
+      },
+      "orchestration": {
+        "kubernetes": false,
+        "helm": false,
+        "scaling": false
+      },
+      "reliability": {
+        "healthCheck": false,
+        "backup": false,
+        "rollback": true
+      },
+      "strategies": {
+        "blueGreen": true,
+        "canary": true,
+        "rollingUpdate": false
+      }
+    }
+  },
+  "summary": {
+    "totalTests": 6,
+    "successfulTests": 5,
+    "maturityScore": 75,
+    "maturityLevel": "中级",
+    "totalResponseTime": 7,
+    "averageResponseTime": 1
+  }
+}
