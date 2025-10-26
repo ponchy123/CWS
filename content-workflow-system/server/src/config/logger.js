@@ -23,8 +23,28 @@ class SimpleLogger {
   debug(message, meta = {}) {
     console.log(`[DEBUG] [${this.name}] ${message}`, meta);
   }
+
+  security(message, meta = {}) {
+    console.warn(`[SECURITY] [${this.name}] ${message}`, meta);
+  }
+
+  performance(metric, value, meta = {}) {
+    console.log(`[PERFORMANCE] [${this.name}] ${metric}: ${value}`, meta);
+  }
 }
 
 const logger = new SimpleLogger();
 
-module.exports = { logger };
+// HTTP logging middleware - simplified version
+const httpLogger = (req, res, next) => {
+  const startTime = Date.now();
+  
+  res.on('finish', () => {
+    const duration = Date.now() - startTime;
+    console.log(`[HTTP] ${req.method} ${req.url} ${res.statusCode} - ${duration}ms`);
+  });
+  
+  next();
+};
+
+module.exports = { logger, httpLogger };

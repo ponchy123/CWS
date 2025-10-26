@@ -328,6 +328,34 @@ class WorkflowEngine {
   }
 
   /**
+   * 获取工作流指标
+   */
+  getMetrics() {
+    const workflows = this.getWorkflows();
+    const runningInstances = this.getRunningInstances();
+    const statusCounts = {
+      running: 0,
+      completed: 0,
+      failed: 0,
+      stopped: 0
+    };
+
+    for (const instance of this.runningInstances.values()) {
+      statusCounts[instance.status] = (statusCounts[instance.status] || 0) + 1;
+    }
+
+    return {
+      totalWorkflows: workflows.length,
+      runningInstances: runningInstances.length,
+      instancesByStatus: statusCounts,
+      registeredAt: workflows.map(workflow => ({
+        id: workflow.id,
+        registeredAt: workflow.createdAt
+      }))
+    };
+  }
+
+  /**
    * 查找步骤索引
    */
   findStepIndex(stepName) {

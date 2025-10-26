@@ -199,10 +199,10 @@ const server = app.listen(PORT, async () => {
 });
 
 // 优雅关闭处理
-const gracefulShutdown = (signal) => {
+const gracefulShutdown = async (signal) => {
   logger.info(`收到${signal}信号，开始优雅关闭服务器...`);
   
-  server.close((err) => {
+  server.close(async (err) => {
     if (err) {
       logger.error('服务器关闭时发生错误', { signal }, err);
       process.exit(1);
@@ -210,13 +210,17 @@ const gracefulShutdown = (signal) => {
     
     logger.info('HTTP服务器已关闭');
     
-    // 关闭数据库连接
+    // 关闭数据库连接 - 使用 async/await 而不是回调
     const mongoose = require('mongoose');
-    mongoose.connection.close(() => {
+    try {
+      await mongoose.connection.close();
       logger.info('数据库连接已关闭');
       logger.info('服务器优雅关闭完成');
       process.exit(0);
-    });
+    } catch (closeErr) {
+      logger.warn('数据库关闭时发生错误，继续关闭', { error: closeErr.message });
+      process.exit(0);
+    }
   });
   
   // 强制关闭超时
