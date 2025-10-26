@@ -11,6 +11,8 @@ class BaseAgent {
     this.name = name;
     this.id = this.generateId();
     this.status = 'idle'; // idle, running, error, stopped
+    this.logger = logger; // 提供logger给子类使用
+    this.startTime = Date.now(); // 添加启动时间
     this.options = {
       maxRetries: 3,
       timeout: 30000,

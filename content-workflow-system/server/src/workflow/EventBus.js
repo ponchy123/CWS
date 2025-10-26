@@ -249,6 +249,20 @@ class EventBus extends EventEmitter {
   }
 
   /**
+   * 获取事件总线指标
+   */
+  getMetrics() {
+    const stats = this.getEventStats();
+    return {
+      totalEvents: stats.totalEvents,
+      totalSubscribers: stats.totalSubscribers,
+      eventsByName: stats.eventsByName,
+      eventsByAgent: stats.eventsByAgent,
+      historySize: this.eventHistory.length
+    };
+  }
+
+  /**
    * 健康检查
    */
   healthCheck() {
